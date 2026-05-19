@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 // ULX3S v3.1.7 HDMI demo: color bars + 440 Hz tone
 
+`include "../common/video_config.vh"
+
 module ulx3s_top (
     input  wire clk_25mhz,
     output wire [3:0] gpdi_dp
@@ -17,8 +19,8 @@ module ulx3s_top (
     wire [3:0] tmds_p;
     wire [3:0] tmds_n;
 
-    wire [9:0] cx, cy;
-    wire [9:0] frame_width, frame_height, screen_width, screen_height;
+    wire [`COUNTER_WIDTH-1:0] cx, cy;
+    wire [`COUNTER_WIDTH-1:0] frame_width, frame_height, screen_width, screen_height;
     wire [23:0] rgb;
 
     wire signed [15:0] audio_left;
@@ -38,7 +40,7 @@ module ulx3s_top (
     );
 
     hdmi_audio_clk_gen #(
-        .CLK_HZ(25_000_000)
+        .CLK_HZ(`CLK_HZ)
     ) u_audio_clk (
         .clk_pixel(clk_pixel),
         .reset(reset),
@@ -46,7 +48,17 @@ module ulx3s_top (
     );
 
     hdmi #(
-        .VIDEO_ID_CODE(1),
+        .VIDEO_ID_CODE(`HDMI_VIC),
+        .FRAME_WIDTH(`FRAME_WIDTH),
+        .FRAME_HEIGHT(`FRAME_HEIGHT),
+        .SCREEN_WIDTH(`SCREEN_WIDTH),
+        .SCREEN_HEIGHT(`SCREEN_HEIGHT),
+        .HSYNC_PULSE_START(`HSYNC_PULSE_START),
+        .HSYNC_PULSE_SIZE(`HSYNC_PULSE_SIZE),
+        .VSYNC_PULSE_START(`VSYNC_PULSE_START),
+        .VSYNC_PULSE_SIZE(`VSYNC_PULSE_SIZE),
+        .INVERT_POLARITY(`INVERT_POLARITY),
+        .COUNTER_WIDTH(`COUNTER_WIDTH),
         .IT_CONTENT(1'b1),
         .DVI_OUTPUT(1'b0),
         .AUDIO_RATE(48000),
@@ -71,7 +83,10 @@ module ulx3s_top (
         .screen_height(screen_height)
     );
 
-    color_bars u_color_bars (
+    color_bars #(
+        .COUNTER_WIDTH(`COUNTER_WIDTH),
+        .SCREEN_WIDTH(`SCREEN_WIDTH)
+    ) u_color_bars (
         .cx(cx),
         .cy(cy),
         .screen_width(screen_width),

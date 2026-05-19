@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 // ACR packet — sample_strobe @ 48 kHz on clk_pixel
+// CTS counter must span ~CLK_HZ/48000 cycles per ms (e.g. 74000 @ 74 MHz > 15 bits)
 
 module hdmi_audio_clock_regeneration_packet #(
     parameter AUDIO_HZ = 48000
@@ -22,7 +23,7 @@ module hdmi_audio_clock_regeneration_packet #(
     reg [1:0] wrap_sync;
 
     reg [19:0] cycle_time_stamp;
-    reg [14:0] cycle_time_stamp_counter;
+    reg [19:0] cycle_time_stamp_counter;
 
     assign header = {8'd0, 8'd0, 8'd1};
 
@@ -48,11 +49,11 @@ module hdmi_audio_clock_regeneration_packet #(
 
     always @(posedge clk_pixel) begin
         if (wrap_sync[1] ^ wrap_sync[0]) begin
-            cycle_time_stamp_counter <= 15'd0;
-            cycle_time_stamp <= {5'd0, cycle_time_stamp_counter + 15'd1};
+            cycle_time_stamp_counter <= 20'd0;
+            cycle_time_stamp <= cycle_time_stamp_counter + 20'd1;
             clk_audio_counter_wrap <= ~clk_audio_counter_wrap;
         end else
-            cycle_time_stamp_counter <= cycle_time_stamp_counter + 15'd1;
+            cycle_time_stamp_counter <= cycle_time_stamp_counter + 20'd1;
     end
 
 endmodule

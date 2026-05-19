@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// PLL: 25 MHz in -> 25.2 MHz pixel, 126 MHz serial (5x) — VIC 1 @ 60.00 Hz
+// PLL: 25 MHz in -> ~74 MHz pixel, ~370 MHz serial (5x) — VIC 4 / 34
 
 module hdmi_pll (
     input  wire clk_in,
@@ -19,20 +19,20 @@ module hdmi_pll (
         .STDBY_ENABLE("DISABLED"),
         .DPHASE_SOURCE("DISABLED"),
         .CLKOP_FPHASE(0),
-        .CLKOP_CPHASE(3),
+        .CLKOP_CPHASE(1),
         .OUTDIVIDER_MUXA("DIVA"),
         .CLKOP_ENABLE("ENABLED"),
-        .CLKOP_DIV(4),
+        .CLKOP_DIV(2),
         .CLKOS_ENABLE("ENABLED"),
-        .CLKOS_DIV(4),
-        .CLKOS_CPHASE(3),
+        .CLKOS_DIV(2),
+        .CLKOS_CPHASE(1),
         .CLKOS_FPHASE(0),
         .CLKOS2_ENABLE("ENABLED"),
-        .CLKOS2_DIV(20),
-        .CLKOS2_CPHASE(19),
+        .CLKOS2_DIV(10),
+        .CLKOS2_CPHASE(9),
         .CLKOS2_FPHASE(0),
-        .CLKFB_DIV(126),
-        .CLKI_DIV(25),
+        .CLKFB_DIV(74),
+        .CLKI_DIV(5),
         .FEEDBK_PATH("INT_OP")
     ) pll_i (
         .CLKI(clk_in),

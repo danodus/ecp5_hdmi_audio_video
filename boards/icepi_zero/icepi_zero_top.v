@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 // IcePi Zero HDMI demo: EIA-189A color bars + 440 Hz tone (50 MHz input clock)
 
+`include "../common/video_config.vh"
+
 module icepi_zero_top (
     input  wire        clk,
     output wire [3:0] gpdi_dp,
@@ -18,8 +20,8 @@ module icepi_zero_top (
     wire [3:0] tmds_p;
     wire [3:0] tmds_n;
 
-    wire [9:0] cx, cy;
-    wire [9:0] frame_width, frame_height, screen_width, screen_height;
+    wire [`COUNTER_WIDTH-1:0] cx, cy;
+    wire [`COUNTER_WIDTH-1:0] frame_width, frame_height, screen_width, screen_height;
     wire [23:0] rgb;
 
     wire signed [15:0] audio_left;
@@ -38,9 +40,8 @@ module icepi_zero_top (
         .clk_pixel_buf()
     );
 
-    // CLK_HZ must match pll clk_pixel (25 MHz for 640x480)
     hdmi_audio_clk_gen #(
-        .CLK_HZ(25_000_000)
+        .CLK_HZ(`CLK_HZ)
     ) u_audio_clk (
         .clk_pixel(clk_pixel),
         .reset(reset),
@@ -48,7 +49,17 @@ module icepi_zero_top (
     );
 
     hdmi #(
-        .VIDEO_ID_CODE(1),
+        .VIDEO_ID_CODE(`HDMI_VIC),
+        .FRAME_WIDTH(`FRAME_WIDTH),
+        .FRAME_HEIGHT(`FRAME_HEIGHT),
+        .SCREEN_WIDTH(`SCREEN_WIDTH),
+        .SCREEN_HEIGHT(`SCREEN_HEIGHT),
+        .HSYNC_PULSE_START(`HSYNC_PULSE_START),
+        .HSYNC_PULSE_SIZE(`HSYNC_PULSE_SIZE),
+        .VSYNC_PULSE_START(`VSYNC_PULSE_START),
+        .VSYNC_PULSE_SIZE(`VSYNC_PULSE_SIZE),
+        .INVERT_POLARITY(`INVERT_POLARITY),
+        .COUNTER_WIDTH(`COUNTER_WIDTH),
         .IT_CONTENT(1'b1),
         .DVI_OUTPUT(1'b0),
         .AUDIO_RATE(48000),
@@ -75,7 +86,10 @@ module icepi_zero_top (
         .screen_height(screen_height)
     );
 
-    color_bars u_color_bars (
+    color_bars #(
+        .COUNTER_WIDTH(`COUNTER_WIDTH),
+        .SCREEN_WIDTH(`SCREEN_WIDTH)
+    ) u_color_bars (
         .cx(cx),
         .cy(cy),
         .screen_width(screen_width),
@@ -91,7 +105,6 @@ module icepi_zero_top (
         .sample_1(audio_right)
     );
 
-    // GPDI: [0]=blue [1]=green [2]=red [3]=clock (matches xgsoc hdmi_interface)
     assign gpdi_dp = tmds_p;
     assign gpdi_dn = tmds_n;
 

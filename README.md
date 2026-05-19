@@ -17,17 +17,20 @@ source ~/oss-cad-suite/environment
 
 Tools: `yosys`, `nextpnr-ecp5`, `ecppack`, plus a board programmer (`fujprog` or `openFPGALoader`).
 
-## Supported video modes (CEA VIC)
+## Supported video modes (VIC)
 
 Select the mode with **`VIC=<n>`** when building. Default is **VIC=1**.
 
 | VIC | Resolution | Refresh rate | Pixel clock | `make` example |
 |-----|------------|--------------|-------------|----------------|
+| **0** | 1024×600 (custom) | ~61 Hz | 50 MHz | `make VIC=0 bitstream` |
 | **1** (default) | 640×480 | 60 Hz | 25.2 MHz | `make bitstream` |
 | **4** | 1280×720 | ~60 Hz | ~74 MHz | `make VIC=4 bitstream` |
 | **34** | 1920×1080 | ~30 Hz | ~74 MHz | `make VIC=34 bitstream` |
 
-VIC 4 and 34 share the same HD PLL (~74 MHz pixel, close to the CEA nominal 74.25 MHz). Bitstreams are written under `build/<board>/vic<n>/`. HD builds use `--timing-allow-fail` on the TMDS serial clock; if needed, run `make clean && make VIC=4 bitstream` again (random seed).
+**VIC 0** is a non-CEA 1024×600 mode; the AVI infoframe reports VIC 0. It uses `hdmi_pll_50.v` (50 MHz pixel, 250 MHz serial).
+
+VIC 4 and 34 share `hdmi_pll_hd.v` (~74 MHz pixel, close to the CEA nominal 74.25 MHz). Bitstreams are written under `build/<board>/vic<n>/`. VIC 0, 4, and 34 use `--timing-allow-fail` on the TMDS serial clock; if needed, run `make clean && make VIC=4 bitstream` again (random seed).
 
 Audio: **440 Hz** test tone at **48 kHz** LPCM in all modes. `CLK_HZ` in [`boards/common/video_config.vh`](boards/common/video_config.vh) must match the PLL pixel clock so the sample rate stays 48 kHz.
 
@@ -37,6 +40,7 @@ Audio: **440 Hz** test tone at **48 kHz** LPCM in all modes. `CLK_HZ` in [`board
 
 ```bash
 cd boards/ulx3s
+make VIC=0 prog             # 1024x600 custom
 make VIC=1 prog             # 640x480 60Hz
 make VIC=4 prog             # 720p 60Hz
 make VIC=34 prog            # 1080p 30Hz
@@ -47,6 +51,7 @@ make VIC=1 prog-flash       # 640x480 60Hz SPI flash
 
 ```bash
 cd boards/icepi_zero
+make VIC=0 prog             # 1024x600 custom
 make VIC=1 prog             # 640x480 60Hz
 make VIC=4 prog             # 720p 60Hz
 make VIC=34 prog            # 1080p 30Hz

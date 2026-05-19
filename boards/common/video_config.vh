@@ -1,7 +1,20 @@
 // SPDX-License-Identifier: MIT
 // CEA-861 timing + clock constants per VIC (selected by Makefile -DVIC_<n>)
 
-`ifdef VIC_4
+`ifdef VIC_0
+  // Custom 1024x600 @ ~61 Hz (50 MHz pixel) — AVI VIC 0 (non-CEA)
+  `define HDMI_VIC              0
+  `define CLK_HZ                50000000
+  `define FRAME_WIDTH           1312
+  `define FRAME_HEIGHT          624
+  `define SCREEN_WIDTH          1024
+  `define SCREEN_HEIGHT         600
+  `define HSYNC_PULSE_START     48
+  `define HSYNC_PULSE_SIZE      96
+  `define VSYNC_PULSE_START     3
+  `define VSYNC_PULSE_SIZE      10
+  `define INVERT_POLARITY       0
+`elsif VIC_4
   `define HDMI_VIC              4
   `define CLK_HZ                74000000
   `define FRAME_WIDTH           1650

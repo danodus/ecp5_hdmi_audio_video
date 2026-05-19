@@ -4,7 +4,7 @@
 
 TOP       := ulx3s_top
 VIC       ?= 1
-SUPPORTED_VICS := 1 4 34
+SUPPORTED_VICS := 0 1 4 34
 
 ifneq ($(filter $(VIC),$(SUPPORTED_VICS)),$(VIC))
   $(error Unsupported VIC=$(VIC). Supported: $(SUPPORTED_VICS))
@@ -21,6 +21,9 @@ YOSYS_DATDIR := $(shell yosys-config --datdir)
 ifeq ($(VIC),1)
   PLL_V         := hdmi_pll.v
   YOSYS_DEFINES :=
+else ifeq ($(VIC),0)
+  PLL_V         := hdmi_pll_50.v
+  YOSYS_DEFINES := -DVIC_0
 else
   PLL_V         := hdmi_pll_hd.v
   YOSYS_DEFINES := -DVIC_$(VIC)

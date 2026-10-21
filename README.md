@@ -71,7 +71,9 @@ Connect an HDMI display/TV with speakers to the GPDI port.
 
 ## HDMI licensing note
 
-This design is for development and education. Commercial products with HDMI connectors may require HDMI Adopter licensing.
+**This design is for development and education only.** HDMI itself is not a royalty free technology. You are free to use it for testing, development, etc. but to receive the HDMI LA's (licensing administration) blessing to create and sell end-user products:
+
+> The manufacturer of the finished end-user product MUST be a licensed HDMI Adopter, and The finished end-user product MUST satisfy all requirements as defined in the Adopter Agreement including but not limited to passing compliance testing either at an HDMI ATC or through self-testing.
 
 ## Attribution
 

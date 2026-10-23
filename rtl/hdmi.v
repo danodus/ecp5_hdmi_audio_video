@@ -32,6 +32,9 @@ module hdmi #(
     input  wire [23:0] rgb,
     input  wire [AUDIO_BIT_WIDTH-1:0] audio_sample_word_0,
     input  wire [AUDIO_BIT_WIDTH-1:0] audio_sample_word_1,
+    // 0 selects FRAME_HEIGHT. Any other value is the cy wrap point,
+    // so a caller can change vertical total without rebuilding.
+    input  wire [COUNTER_WIDTH-1:0] frame_height_i,
     output wire [2:0]  tmds,
     output wire        tmds_clock,
     output wire [3:0]  tmds_p,
@@ -57,9 +60,13 @@ module hdmi #(
     reg hsync;
     reg vsync;
     wire invert;
+    // Drive frame_height_i with 0 to keep FRAME_HEIGHT. An open port is
+    // not a constant 0, and synthesis may then collapse the frame.
+    wire [COUNTER_WIDTH-1:0] frame_h =
+        (frame_height_i == {COUNTER_WIDTH{1'b0}}) ? FRAME_H : frame_height_i;
 
     assign frame_width = FRAME_W;
-    assign frame_height = FRAME_H;
+    assign frame_height = frame_h;
     assign screen_width = SCREEN_W;
     assign screen_height = SCREEN_H;
     assign invert = INVERT_POLARITY;
@@ -86,7 +93,8 @@ module hdmi #(
             else
                 cx <= cx + ONE;
             if (cx == FRAME_W - ONE) begin
-                if (cy == FRAME_H - ONE)
+                // >= so a shorter frame_h still wraps if cy is already past it.
+                if (cy >= frame_h - ONE)
                     cy <= {COUNTER_WIDTH{1'b0}};
                 else
                     cy <= cy + ONE;
@@ -147,9 +155,9 @@ module hdmi #(
                     video_preamble <= 1'b0;
                 end else begin
                     video_guard <= (cx >= FRAME_W - 12'd2) && (cx < FRAME_W) &&
-                        ((cy == FRAME_H - ONE) || (cy < SCREEN_H - ONE));
+                        ((cy == frame_h - ONE) || (cy < SCREEN_H - ONE));
                     video_preamble <= (cx >= FRAME_W - 12'd10) && (cx < FRAME_W - 12'd2) &&
-                        ((cy == FRAME_H - ONE) || (cy < SCREEN_H - ONE));
+                        ((cy == frame_h - ONE) || (cy < SCREEN_H - ONE));
                 end
             end
 

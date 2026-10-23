@@ -74,6 +74,7 @@ module icepi_zero_top (
         .rgb(rgb),
         .audio_sample_word_0(audio_left),
         .audio_sample_word_1(audio_right),
+        .frame_height_i({`COUNTER_WIDTH{1'b0}}),
         .tmds(tmds_unused),
         .tmds_clock(tmds_clock_unused),
         .tmds_p(tmds_p),

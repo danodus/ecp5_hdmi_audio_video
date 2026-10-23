@@ -69,11 +69,17 @@ Connect an HDMI display/TV with speakers to the GPDI port.
 | `boards/ulx3s/` | ULX3S test top, PLLs, LPF, Makefile |
 | `boards/icepi_zero/` | IcePi Zero test top, PLLs, LPF, Makefile |
 
-## HDMI licensing note
+## HDMI Licensing and Compliance Disclaimer
 
-**This design is for development and education only.** HDMI itself is not a royalty free technology. You are free to use it for testing, development, etc. but to receive the HDMI LA's (licensing administration) blessing to create and sell end-user products:
+**This gateware IP design is provided strictly for educational, research, and prototyping purposes.** 
 
-> The manufacturer of the finished end-user product MUST be a licensed HDMI Adopter, and The finished end-user product MUST satisfy all requirements as defined in the Adopter Agreement including but not limited to passing compliance testing either at an HDMI ATC or through self-testing.
+HDMI is a proprietary technology managed by HDMI Licensing Administrator, Inc. (HDMI LA), and is subject to strict patent and trademark licensing agreements. While developers are legally permitted to use this repository for benchtop development, testing, and academic evaluation:
+
+1. **Commercial Product Liability:** Any entity that incorporates this design into a physical commercial product sold to end-users assumes full and exclusive legal responsibility for HDMI licensing. The manufacturer of the finished end-user device must be an official, licensed HDMI Adopter and pay all applicable annual fees and per-unit royalties.
+2. **The "GPDI / DVI" Naming Exception:** Labeling a physical physical connector as "GPDI" (General-Purpose Differential Interface), "Digital Video," or "DVI" on a PCB does **not** exempt a commercial product from HDMI licensing if the underlying hardware transmits proprietary HDMI data packets, info-frames, or audio streams to standard consumer displays. 
+3. **Compliance Testing:** Any commercial hardware utilizing this implementation must fully satisfy the requirements defined in the HDMI Adopter Agreement, including mandatory compliance testing at an Authorized Test Center (ATC) or authorized self-testing.
+
+The author of this repository accepts no liability for patent or trademark infringement resulting from the unauthorized or unlicensed commercial distribution of physical hardware utilizing this source code.
 
 ## Attribution
 

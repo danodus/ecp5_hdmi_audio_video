@@ -60,6 +60,14 @@ module hdmi_packet_picker #(
 
     reg [3:0] audio_sample_word_present;
 
+    // IEC 60958 word-length field, LSB first. 16-bit audio -> 4'b0010.
+    localparam [2:0] WL_SUB =
+        (AUDIO_BIT_WIDTH < 20) ? (20 - AUDIO_BIT_WIDTH) :
+        (AUDIO_BIT_WIDTH == 20) ? 5 :
+        (AUDIO_BIT_WIDTH < 24) ? (24 - AUDIO_BIT_WIDTH) : 5;
+    localparam [0:0] WL_LIMIT = (AUDIO_BIT_WIDTH <= 20) ? 1'b0 : 1'b1;
+    localparam [3:0] WORD_LENGTH = {WL_SUB[0], WL_SUB[1], WL_SUB[2], WL_LIMIT};
+
     hdmi_audio_clock_regeneration_packet acr (
         .clk_pixel(clk_pixel),
         .sample_strobe(sample_strobe),
@@ -70,7 +78,7 @@ module hdmi_packet_picker #(
 
     hdmi_audio_sample_packet #(
         .SAMPLING_FREQUENCY(4'b0010),
-        .WORD_LENGTH(4'b1000)
+        .WORD_LENGTH(WORD_LENGTH)
     ) asp (
         .frame_counter(frame_counter),
         .header(header_asp),

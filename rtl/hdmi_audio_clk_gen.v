@@ -15,16 +15,17 @@ module hdmi_audio_clk_gen #(
 
     assign sample_strobe = strobe_reg;
 
+    // Remainder stays in acc so the long-term rate is AUDIO_HZ/CLK_HZ.
     always @(posedge clk_pixel) begin
-        strobe_reg <= 1'b0;
         if (reset) begin
             acc <= 32'd0;
+            strobe_reg <= 1'b0;
+        end else if ((acc + AUDIO_HZ) >= CLK_HZ) begin
+            acc <= acc + AUDIO_HZ - CLK_HZ;
+            strobe_reg <= 1'b1;
         end else begin
             acc <= acc + AUDIO_HZ;
-            if (acc >= CLK_HZ) begin
-                acc <= acc - CLK_HZ;
-                strobe_reg <= 1'b1;
-            end
+            strobe_reg <= 1'b0;
         end
     end
 

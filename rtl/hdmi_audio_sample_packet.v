@@ -46,9 +46,10 @@ module hdmi_audio_sample_packet #(
     // IEC 60958 channel status block (LSB first), matches hdl-util audio_sample_packet.sv
     assign channel_status_left = {
         152'd0,
-        4'b0000,                    // ORIGINAL_SAMPLING_FREQUENCY
-        WORD_LENGTH,                // {word_length[2:0], limit}
-        2'b00,                      // CLOCK_ACCURACY
+        4'b0000,                    // ORIGINAL_SAMPLING_FREQUENCY (bits 36-39)
+        WORD_LENGTH,                // bits 32-35, LSB = max-length flag
+        2'b00,                      // bits 30-31 reserved
+        2'b00,                      // bits 28-29 clock accuracy, Level II
         SAMPLING_FREQUENCY,
         CHANNEL_LEFT,
         4'd0,                       // SOURCE_NUMBER
@@ -65,6 +66,7 @@ module hdmi_audio_sample_packet #(
         4'b0000,
         WORD_LENGTH,
         2'b00,
+        2'b00,
         SAMPLING_FREQUENCY,
         CHANNEL_RIGHT,
         4'd0,
@@ -79,23 +81,25 @@ module hdmi_audio_sample_packet #(
     assign header[19:12] = {4'b0000, {3'b000, 1'b0}};
     assign header[7:0] = 8'd2;
 
-    assign header[23] = (afc0 == 8'd0) && audio_sample_word_present[0];
-    assign header[22] = (afc1 == 8'd0) && audio_sample_word_present[1];
-    assign header[21] = (afc2 == 8'd0) && audio_sample_word_present[2];
-    assign header[20] = (afc3 == 8'd0) && audio_sample_word_present[3];
-    assign header[11] = audio_sample_word_present[0];
-    assign header[10] = audio_sample_word_present[1];
-    assign header[9]  = audio_sample_word_present[2];
-    assign header[8]  = audio_sample_word_present[3];
+    // HB2[4] is B.sp0 and HB1[0] is sample_present.sp0 (HDMI 1.4a Table 5-12).
+    assign header[20] = (afc0 == 8'd0) && audio_sample_word_present[0];
+    assign header[21] = (afc1 == 8'd0) && audio_sample_word_present[1];
+    assign header[22] = (afc2 == 8'd0) && audio_sample_word_present[2];
+    assign header[23] = (afc3 == 8'd0) && audio_sample_word_present[3];
+    assign header[8]  = audio_sample_word_present[0];
+    assign header[9]  = audio_sample_word_present[1];
+    assign header[10] = audio_sample_word_present[2];
+    assign header[11] = audio_sample_word_present[3];
 
-    assign p00 = ^{channel_status_left[afc0], 1'b0, 1'b0, audio_sample_word_00[23:16]};
-    assign p01 = ^{channel_status_right[afc0], 1'b0, 1'b0, audio_sample_word_01[23:16]};
-    assign p10 = ^{channel_status_left[afc1], 1'b0, 1'b0, audio_sample_word_10[23:16]};
-    assign p11 = ^{channel_status_right[afc1], 1'b0, 1'b0, audio_sample_word_11[23:16]};
-    assign p20 = ^{channel_status_left[afc2], 1'b0, 1'b0, audio_sample_word_20[23:16]};
-    assign p21 = ^{channel_status_right[afc2], 1'b0, 1'b0, audio_sample_word_21[23:16]};
-    assign p30 = ^{channel_status_left[afc3], 1'b0, 1'b0, audio_sample_word_30[23:16]};
-    assign p31 = ^{channel_status_right[afc3], 1'b0, 1'b0, audio_sample_word_31[23:16]};
+    // Even parity over the whole subframe: V, U, C, and all 24 sample bits.
+    assign p00 = ^{channel_status_left[afc0], 1'b0, 1'b0, audio_sample_word_00};
+    assign p01 = ^{channel_status_right[afc0], 1'b0, 1'b0, audio_sample_word_01};
+    assign p10 = ^{channel_status_left[afc1], 1'b0, 1'b0, audio_sample_word_10};
+    assign p11 = ^{channel_status_right[afc1], 1'b0, 1'b0, audio_sample_word_11};
+    assign p20 = ^{channel_status_left[afc2], 1'b0, 1'b0, audio_sample_word_20};
+    assign p21 = ^{channel_status_right[afc2], 1'b0, 1'b0, audio_sample_word_21};
+    assign p30 = ^{channel_status_left[afc3], 1'b0, 1'b0, audio_sample_word_30};
+    assign p31 = ^{channel_status_right[afc3], 1'b0, 1'b0, audio_sample_word_31};
 
     assign sub_0 = audio_sample_word_present[0] ?
         {p01, channel_status_right[afc0], 1'b0, 1'b0,

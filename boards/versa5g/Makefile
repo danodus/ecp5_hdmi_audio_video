@@ -27,7 +27,7 @@ else
   YOSYS_DEFINES := -DVIC_$(VIC)
 endif
 
-COMMON_V  := ../common/color_bars.v ../common/sine_gen.v
+COMMON_V  := ../common/color_bars.v ../common/sine_gen.v ../common/pll_reset.v
 BOARD_V   := versa5g_top.v
 BOARD_SRC := $(PLL_V) $(BOARD_V) $(COMMON_V)
 RTL_V     := $(wildcard ../../rtl/*.v)

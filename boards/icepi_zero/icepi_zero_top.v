@@ -10,7 +10,7 @@ module icepi_zero_top (
 );
 
     wire reset;
-    reg [15:0] reset_cnt;
+    wire pll_locked;
 
     wire clk_pixel;
     wire clk_serial;
@@ -27,17 +27,18 @@ module icepi_zero_top (
     wire signed [15:0] audio_left;
     wire signed [15:0] audio_right;
 
-    always @(posedge clk_pixel) begin
-        if (reset_cnt != 16'hffff)
-            reset_cnt <= reset_cnt + 16'd1;
-    end
-    assign reset = (reset_cnt != 16'hffff);
-
     hdmi_pll u_pll (
         .clk_in(clk),
         .clk_pixel(clk_pixel),
         .clk_serial(clk_serial),
-        .clk_pixel_buf()
+        .clk_pixel_buf(),
+        .locked(pll_locked)
+    );
+
+    pll_reset u_pll_reset (
+        .clk(clk_pixel),
+        .locked(pll_locked),
+        .reset(reset)
     );
 
     hdmi_audio_clk_gen #(

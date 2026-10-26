@@ -6,7 +6,8 @@ module hdmi_pll (
     input  wire clk_in,
     output wire clk_pixel,
     output wire clk_serial,
-    output wire clk_pixel_buf
+    output wire clk_pixel_buf,
+    output wire locked
 );
 
     wire clkfb;
@@ -50,7 +51,7 @@ module hdmi_pll (
         .PHASESTEP(1'b0),
         .PLLWAKESYNC(1'b0),
         .ENCLKOP(1'b0),
-        .LOCK()
+        .LOCK(locked)
     );
 
     assign clk_pixel = clk_pixel_buf;

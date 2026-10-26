@@ -39,9 +39,9 @@
   `define VSYNC_PULSE_SIZE      5
   `define INVERT_POLARITY       0
 `else
-  // VIC 1 — 640x480p @ 60 Hz (25.2 MHz pixel)
+  // VIC 1 — 640x480p @ ~59.5 Hz (25 MHz pixel)
   `define HDMI_VIC              1
-  `define CLK_HZ                25200000
+  `define CLK_HZ                25000000
   `define FRAME_WIDTH           800
   `define FRAME_HEIGHT          525
   `define SCREEN_WIDTH          640

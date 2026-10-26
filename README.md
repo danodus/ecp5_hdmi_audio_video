@@ -24,7 +24,7 @@ Select the mode with **`VIC=<n>`** when building. Default is **VIC=1**.
 | VIC | Resolution | Refresh rate | Pixel clock | `make` example |
 |-----|------------|--------------|-------------|----------------|
 | **0** | 1024×600 (custom) | ~61 Hz | 50 MHz | `make VIC=0 bitstream` |
-| **1** (default) | 640×480 | 60 Hz | 25.2 MHz | `make bitstream` |
+| **1** (default) | 640×480 | ~59.5 Hz | 25 MHz | `make bitstream` |
 | **4** | 1280×720 | ~60 Hz | ~74 MHz | `make VIC=4 bitstream` |
 | **34** | 1920×1080 | ~30 Hz | ~74 MHz | `make VIC=34 bitstream` |
 

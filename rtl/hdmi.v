@@ -245,10 +245,12 @@ module hdmi #(
                     mode <= 3'd0;
                     video_data <= 24'd0;
                     control_data <= 6'd0;
+                    data_island_data <= 12'd0;
                 end else begin
                     mode <= video_data_period ? 3'd1 : 3'd0;
                     video_data <= rgb;
                     control_data <= {4'b0000, vsync, hsync};
+                    data_island_data <= 12'd0;
                 end
             end
             assign packet_enable = 1'b0;
